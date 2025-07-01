@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>スロット＋ショップ＋背景画像固定</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>スロット風ゲーム</h1>
+
+  <div id="status-area">
+    <p>コイン：<span id="coin-count">0</span> 枚</p>
+  </div>
+
+  <div id="game-area">
+    <div class="reels-container">
+      <div class="reel"><img src="images/7.png" id="reel1" /></div>
+      <div class="reel"><img src="images/7.png" id="reel2" /></div>
+      <div class="reel"><img src="images/7.png" id="reel3" /></div>
+    </div>
+    <br />
+    <button id="spin-btn">スタート</button>
+    <button id="shop-btn">ショップを開く</button>
+
+    <div id="message-area"></div>
+    <img id="character" src="images/char1.png" alt="キャラ画像" />
+
+    <div id="shop-panel" class="hidden">
+      <h2>ショップ</h2>
+      <div id="shop-items"></div>
+      <button id="close-shop-btn">閉じる</button>
+    </div>
+  </div>
+
+  <audio id="hit-sound" src="sounds/hit.mp3" preload="auto"></audio>
+  <audio id="miss-sound" src="sounds/miss.mp3" preload="auto"></audio>
+
+  <script src="game.js" defer></script>
+</body>
+</html>

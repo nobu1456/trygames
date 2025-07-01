@@ -1,0 +1,82 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background-image: url('images/bg_game.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  transition: background 0.5s ease;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+#game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+}
+
+.reels-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.reel img {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #000;
+  border-radius: 8px;
+  background-color: white;
+}
+
+#character {
+  width: 200px;
+  margin-top: 20px;
+}
+
+#message-area {
+  margin: 10px;
+  font-size: 20px;
+  color: red;
+  height: 30px;
+}
+
+.hidden {
+  display: none;
+}
+
+#shop-panel {
+  border: 2px solid #333;
+  background: #fff;
+  padding: 10px;
+  margin-top: 20px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+}
+
+.shop-item img {
+  width: 80px;
+  margin-right: 10px;
+  border-radius: 6px;
+}
+
+.shop-item button {
+  margin-left: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
