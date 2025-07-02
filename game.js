@@ -9,48 +9,38 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("reel2"),
     document.getElementById("reel3")
   ];
-  const characterImg = document.getElementById("character");
   const messageArea = document.getElementById("message-area");
+  const logArea = document.getElementById("log-area");
+  const shareBtn = document.getElementById("share-btn");
+
   const hitSound = document.getElementById("hit-sound");
+  const jackpotSound = document.getElementById("jackpot-sound");
   const missSound = document.getElementById("miss-sound");
+  const buySound = document.getElementById("buy-sound");
+  const spinSound = document.getElementById("spin-sound");
+
+  const bunnySpeech = document.getElementById("speech-bubble");
   const shopItemsContainer = document.getElementById("shop-items");
 
-  let currentIndex = 0;
   let coin = 0;
   let ownedItems = {};
   let spinning = false;
+  let logs = [];
 
   const shopItems = [
-    {
-      id: "special_swimsuit",
-      name: "水着キャラ",
-      price: 50,
-      img: "images/char_special.png"
-    },
-    {
-      id: "uniform",
-      name: "制服キャラ",
-      price: 30,
-      img: "images/char_uniform.png"
-    },
-    {
-      id: "bg_change",
-      name: "背景変更",
-      price: 20,
-      img: "images/bg_sample.png"
-      // 背景変更機能は今回なし
-    }
+    { id: "item1", name: "メイドEX", price: 50, img: "images/shop1.png" },
+    { id: "item2", name: "水着", price: 30, img: "images/shop2.png" },
+    { id: "item3", name: "制服", price: 20, img: "images/shop3.png" },
+    { id: "item4", name: "着物", price: 20, img: "images/shop4.png" },
+    { id: "item5", name: "メイドA", price: 30, img: "images/shop5.png" },
+    { id: "item6", name: "メイドB", price: 30, img: "images/shop6.png" }
   ];
 
-  function updateCharacterImage() {
-    if (ownedItems["special_swimsuit"]) {
-      characterImg.src = "images/char_special.png";
-    } else if (ownedItems["uniform"]) {
-      characterImg.src = "images/char_uniform.png";
-    } else {
-      const chars = ["images/char1.png", "images/char2.png", "images/char3.png"];
-      characterImg.src = chars[currentIndex];
-    }
+  function getRandomSymbol() {
+    const rand = Math.random();
+    if (rand < 0.5) return "lemon";        // 50%
+    else if (rand < 0.75) return "cherry";  // 25%
+    else return "7";                        // 25% -> adjusted later to 10%
   }
 
   function showMessage(msg) {
@@ -58,63 +48,93 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => (messageArea.textContent = ""), 2000);
   }
 
+  function showSpeech(msg) {
+    bunnySpeech.textContent = msg;
+    bunnySpeech.classList.remove("hidden");
+    setTimeout(() => bunnySpeech.classList.add("hidden"), 2000);
+  }
+
+  function addLog(msg) {
+    logs.unshift(msg);
+    if (logs.length > 10) logs.pop();
+    logArea.innerHTML = logs.map(log => `<div>${log}</div>`).join("");
+  }
+
   function addCoin(amount) {
     coin += amount;
     coinDisplay.textContent = coin;
+    updateShareLink();
+  }
+
+  function updateShareLink() {
+    const url = encodeURIComponent(location.href);
+    const text = encodeURIComponent(`今のコイン枚数：${coin}枚！ #スロット風ゲーム`);
+    shareBtn.href = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
   }
 
   function spinReels() {
     if (spinning) return;
     spinning = true;
     showMessage("スロット回転中...");
+    spinSound.currentTime = 0;
+    spinSound.play();
+
     let spinCount = 0;
     const maxSpin = 20;
-    const images = ["7", "cherry", "bar"];
     const spinInterval = setInterval(() => {
       for (let i = 0; i < 3; i++) {
-        const rand = images[Math.floor(Math.random() * images.length)];
-        reels[i].src = `images/${rand}.png`;
+        const symbol = getRandomSymbol();
+        reels[i].src = `images/${symbol}.png`;
       }
       spinCount++;
       if (spinCount >= maxSpin) {
         clearInterval(spinInterval);
+        spinSound.pause();
+        spinSound.currentTime = 0;
         finishSpin();
       }
     }, 100);
   }
 
   function finishSpin() {
-    const images = ["7", "cherry", "bar"];
     const results = [];
 
     for (let i = 0; i < 3; i++) {
-      const rand = images[Math.floor(Math.random() * images.length)];
-      reels[i].src = `images/${rand}.png`;
-      results.push(rand);
+      const symbol = getRandomSymbol();
+      reels[i].src = `images/${symbol}.png`;
+      results.push(symbol);
     }
 
     if (results.every(r => r === results[0])) {
+      let msg = "";
+      let reward = 0;
       if (results[0] === "7") {
-        currentIndex = Math.min(currentIndex + 1, 2);
-        updateCharacterImage();
-        showMessage("大当たり！＋10コイン！");
-        addCoin(10);
-        hitSound.play();
+        msg = "おおあたり！＋15コイン！";
+        jackpotSound.play();
+        showSpeech("おおあたり！");
+        reward = 15;
       } else if (results[0] === "cherry") {
-        characterImg.src = "images/char_laugh.png";
-        showMessage("チェリー揃い！＋3コイン！");
-        addCoin(3);
+        msg = "チェリー揃い！＋10コイン！";
         hitSound.play();
+        showSpeech("あたり！");
+        reward = 10;
       } else {
-        characterImg.src = "images/char_mad.png";
-        showMessage("レモン揃い！＋1コイン！");
-        addCoin(1);
-        missSound.play();
+        msg = "レモン揃い！＋5コイン！";
+        hitSound.play();
+        showSpeech("あたり！");
+        reward = 5;
       }
+      addCoin(reward);
+      showMessage(msg);
+      addLog(msg);
     } else {
-      showMessage("はずれ！");
+      const msg = "はずれ！";
+      showMessage(msg);
+      addLog(msg);
       missSound.play();
+      showSpeech("はずれ");
     }
+
     spinning = false;
   }
 
@@ -142,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const buyBtn = document.createElement("button");
       buyBtn.textContent = ownedItems[item.id] ? "購入済み" : "購入する";
-      buyBtn.disabled = ownedItems[item.id] ? true : false;
+      buyBtn.disabled = ownedItems[item.id];
 
       buyBtn.addEventListener("click", () => {
         if (ownedItems[item.id]) return;
@@ -153,9 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (confirm(`${item.name}を${item.price}コインで購入しますか？`)) {
           coin -= item.price;
           ownedItems[item.id] = true;
-          updateCharacterImage();
           coinDisplay.textContent = coin;
           renderShopItems();
+          buySound.play();
           alert("購入完了！");
         }
       });
@@ -166,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (ownedItems[item.id]) {
         const dlBtn = document.createElement("button");
-        dlBtn.textContent = "ダウンロード";
+        dlBtn.textContent = "画像を保存";
         dlBtn.addEventListener("click", () => {
           downloadImage(item.img, `${item.name}.png`);
         });
@@ -186,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showMessage("");
   });
 
-  updateCharacterImage();
   coinDisplay.textContent = coin;
   renderShopItems();
+  updateShareLink();
 });

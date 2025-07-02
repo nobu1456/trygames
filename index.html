@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>スロット＋ショップ＋背景画像固定</title>
+  <title>スロットゲーム</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,28 +12,43 @@
     <p>コイン：<span id="coin-count">0</span> 枚</p>
   </div>
 
-  <div id="game-area">
-    <div class="reels-container">
-      <div class="reel"><img src="images/7.png" id="reel1" /></div>
-      <div class="reel"><img src="images/7.png" id="reel2" /></div>
-      <div class="reel"><img src="images/7.png" id="reel3" /></div>
+  <div id="game-container">
+    <!-- スロットとボタン -->
+    <div id="game-area">
+      <div class="reels-container">
+        <div class="reel"><img src="images/7.png" id="reel1" /></div>
+        <div class="reel"><img src="images/7.png" id="reel2" /></div>
+        <div class="reel"><img src="images/7.png" id="reel3" /></div>
+      </div>
+      <br />
+      <button id="spin-btn">スタート</button>
+      <button id="shop-btn">ショップを開く</button>
+      <div id="message-area"></div>
+      <div id="log-area"></div>
+      <a id="share-btn" href="#" target="_blank">結果をSNSで共有</a>
+
+      <!-- ショップ -->
+      <div id="shop-panel" class="hidden">
+        <h2>ショップ</h2>
+        <div id="shop-items"></div>
+        <button id="close-shop-btn">閉じる</button>
+      </div>
     </div>
-    <br />
-    <button id="spin-btn">スタート</button>
-    <button id="shop-btn">ショップを開く</button>
 
-    <div id="message-area"></div>
-    <img id="character" src="images/char1.png" alt="キャラ画像" />
-
-    <div id="shop-panel" class="hidden">
-      <h2>ショップ</h2>
-      <div id="shop-items"></div>
-      <button id="close-shop-btn">閉じる</button>
+    <!-- バニーガールと吹き出し -->
+    <div id="bunny-area">
+      <img src="images/bunny.png" alt="バニーガール" id="bunny-img" />
+      <div id="speech-bubble" class="hidden">あたり</div>
     </div>
   </div>
 
+  <!-- 音声ファイル -->
+  <audio id="bgm" src="sounds/bgm.mp3" loop autoplay></audio>
   <audio id="hit-sound" src="sounds/hit.mp3" preload="auto"></audio>
+  <audio id="jackpot-sound" src="sounds/jackpot.mp3" preload="auto"></audio>
   <audio id="miss-sound" src="sounds/miss.mp3" preload="auto"></audio>
+  <audio id="buy-sound" src="sounds/buy.mp3" preload="auto"></audio>
+  <audio id="spin-sound" src="sounds/spin.mp3" preload="auto"></audio>
 
   <script src="game.js" defer></script>
 </body>
